@@ -1,55 +1,79 @@
 import { ServerResponse } from "http";
 import React, { useEffect, useState, useRef,useMemo } from "react";
+import { ItemView } from "../components/ItemView";
+import { Searcher } from "../components/Searcher";
 import { useDebouncer } from "../hooks/useDeboundcer";
-import { useSearchUsersQuery } from "../store/github/github.api";
+import { Item } from "../models/models";
+import { useLazySearchReposQuery, useSearchUsersQuery } from "../store/github/github.api";
 
 export default function HomePage(){ 
      
-     const [search, setSearch]=useState<string>("")
-     const [drop,setDrop]=useState(true)
-     const debounced=useDebouncer(search)
-     const {isLoading, isError, data}=useSearchUsersQuery(debounced, {
-                                                          skip: debounced.length<3
-     })
-    
-
-    useEffect(()=>{
-        console.log(search,searchOptions)
-         },[debounced])
-    
-    const searchOptions=useMemo(()=>data?.slice(0,8),[debounced])
-    
-
-
+    const [drop,setDrop]=useState(true)
+    const [search, setSearch]=useState<string>("")
+    const [userId, setUserId]=useState<any>()
      
+    const debounced=useDebouncer(search)
+
+    const debounceSearch=(searched:string):void=>{ 
+         setSearch(searched)
+         
+    }
+
+    const {isLoading, isError, data}=useSearchUsersQuery(debounced, {
+        skip: debounced.length<3
+        })
+    const [fetchRepo,{data:repos}]=useLazySearchReposQuery()
+    const getRepos=(username:string)=>{
+        fetchRepo(username)
+
+    } 
+
+  const getItem=(id:any)=>{
+      setUserId(id) 
+      setDrop(false)
+  } 
+ 
+   const chosenItem=useMemo(()=>data?.filter((item)=>item.id===userId),[userId])
+
+   useEffect(()=>{
+     console.log(chosenItem)
+   },[userId])
+   
+    
     
     return     <div className="mt-10 mx-5 flex space-between flex-col  items-center" onClick={()=>setDrop(false)}>
-                         <div className="flex space-between">   
-                            <div className="flex-col flex items-center"
-                                 onClick={(e)=>e.stopPropagation()}>
-                                <input className="outline-none border-black border-solid border-2 w-60 mt-2 rounded-1xl"
-                                       onChange={(e)=>setSearch(e.target.value)}
-                                       onClick={()=>setDrop(true)}> 
-                                </input>
-                                {isLoading&&<p>Loading...</p>}
-
-                                 
-                                {drop&&<ul className="list-none shadow-500 w-[100%] shadow-md">
-                                        {searchOptions?.map((el,key)=>{
-                                        return<li key={el.id} className="shadow-500 text-black-500 hover:bg-sky-700 w-[100%] text-start cursor-pointer">{el.login}</li>
-                                        })}
-                                        </ul>
-                                        }
-                                        
-                                
-                            </div>
-                        
-                       
-                        <button  className="border-black border-2 mx-2 mt-2 h-7 text-sm  w-40">Click</button> 
-                        </div>
-                        {isError&&<p className="my-2 text-red-600 text-center">Something went wrong with the fetching</p>}
+                         <Searcher  drop= {drop}
+                                    setDrop={setDrop} 
+                                    debounced={debounced}
+                                    isLoading={isLoading}
+                                    data={data}
+                                    getRepos={getRepos}
+                                    setSearch={debounceSearch}
+                                    getItem={getItem}
+                                    />
+                         
+                        {isError&&<p className="my-10 text-red-600 text-center">Something went wrong with the fetching</p>}
+                         <ItemView chosenItem={chosenItem}/>
                </div>
     
 }
 
+
+export interface SearchType{
+    data?:Item[],
+    isLoading:boolean,
+    drop:boolean, 
+    debounced:string, 
+    getRepos:(username:string)=>void,
+    setDrop:(value:boolean)=>void, 
+    setSearch:(searched:string)=>void,
+    getItem:(id:any)=>void,
+
+}
  
+export interface SearchResponse{
+    data: Item[], 
+    isLoading:boolean, 
+    isError: boolean
+}
+

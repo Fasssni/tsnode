@@ -1,18 +1,25 @@
 import axios from "axios"
 import { useEffect, useState } from "react"
 
+
+export interface MessageType{ 
+    message:string, 
+    id:string,
+}
+
 export const Chat=()=>{
      
     const [message,setMessage]=useState<string>() 
-    const [values, setValues]=useState<object[]>()
+    const [values, setValues]=useState<MessageType[]>([])
 
 
     async function subscribe(){
          try{
              const {data}=await axios.get('http://localhost:3000/get-message')
-             setValues(prev=>[prev,...data])
+             setValues(prev=>[...prev, data])
+             
              await subscribe()
-             console.log(values)
+            
          }catch(e){
             setTimeout(()=>{ 
                 subscribe()
@@ -35,7 +42,15 @@ export const Chat=()=>{
         subscribe()
        
     },[])
+
+    useEffect(()=>{
+        console.log(values)
+       
+    },[])
+
     
+
+ 
     return  <div className="h-96 w-full flex justify-center flex-col items-center">
                 <input className="outline-none border-black border-solid border-2 w-60 mt-2 rounded-1xl"
                        onChange={e=> setMessage(e.target.value)}
@@ -46,5 +61,12 @@ export const Chat=()=>{
                         >
                         Send
                 </button>
+
+                <div> 
+                    {values.map(item=>{
+                        return <p key={item.id}>{item.message}</p>
+                    })}
+
+                </div>
             </div>
 }

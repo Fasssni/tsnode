@@ -26,8 +26,7 @@ function App() {
     <Routes>
         <Route path="/" element={<HomePage/>}/>
         <Route path="/favpages" element={<FavPages/>}/>
-        <Route path="/chat" element={<Chat/>}/>
-
+       
         <Route path="*" element={<HomePage/>}/>
     </Routes>
     </>

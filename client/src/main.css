@@ -52,5 +52,56 @@
     background-color: white;
     margin-left:2rem;
 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+
+
+
+}
+
+.post_item{
+    display:flex; 
+    width:90%;
+    justify-content:start;
+    align-items: start;
+    flex-direction:column;
+    height:auto;
+    margin-top:0.5rem;
+}
+
+.post_item_top{ 
+    display:flex;
+    
+}
+.post_item_author{ 
+    font-weight: 1000;
+    margin-right:0.3rem;
+}
+.form{ 
+    display:flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 70%;
+}
+.post_input{ 
+     border:1px grey solid;
+     margin:0.2rem 0;
+     outline: none;
+     border-radius: 5px;
+     width: 100%;
+
+}
+
+.btn{
+    border:0px grey solid;
+    border-radius: 4px;
+    width:50%;
+    padding:5px 10px;
+    color: white;
+    background: rgb(114, 114, 232);
+    cursor: pointer;
 
 }

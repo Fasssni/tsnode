@@ -8,6 +8,7 @@ import HomePage from './pages/HomePage';
 import FavPages from './pages/FavPages';
 import { NavBar } from './components/Navar';
 import { Chat } from './pages/Chat';
+import { Posts } from './pages/Posts';
 
 
 interface ForApp{ 
@@ -26,7 +27,7 @@ function App() {
     <Routes>
         <Route path="/" element={<HomePage/>}/>
         <Route path="/favpages" element={<FavPages/>}/>
-       
+        <Route path="/posts" element={<Posts/>}/>
         <Route path="*" element={<HomePage/>}/>
     </Routes>
     </>

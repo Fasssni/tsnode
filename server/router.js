@@ -14,5 +14,14 @@ router.post("/test",async (req, res)=>{
             res.status(500).json(e)
     
         }})
+
+router.get("/test", async (req,res)=>{
+    try{
+    const posts=await Post.find()
+    res.status(200).json(posts)
+    }catch(e){
+    res.status(500).json(e)
+    }
+})
     
 module.exports=router

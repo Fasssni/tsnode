@@ -1,5 +1,6 @@
 import axios from "axios"
 import { useEffect, useState } from "react"
+import { Posts } from "./Posts"
 
 
 export interface MessageType{ 
@@ -68,5 +69,6 @@ export const Chat=()=>{
                     })}
 
                 </div>
+                
             </div>
 }

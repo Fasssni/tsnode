@@ -10,7 +10,7 @@ export const NavBar=()=>{
              <span> 
                  <Link to="/" className="mr-5">Home Page</Link>
                  <Link to="/favpages" className="mr-5">Favorite</Link>
-                 <Link to="/chat" className="mr-5">Chat</Link>
+                 <Link to="/Posts" className="mr-5">Posts</Link>
              </span>
 
            </div>

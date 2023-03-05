@@ -5,6 +5,7 @@ import { Searcher } from "../components/Searcher";
 import { useDebouncer } from "../hooks/useDeboundcer";
 import { IRepo, Item } from "../models/models";
 import { useLazySearchReposQuery, useSearchUsersQuery } from "../store/github/github.api";
+import { Posts } from "./Posts";
 
 export default function HomePage(){ 
      
@@ -61,6 +62,7 @@ export default function HomePage(){
                                     areRepos={areRepos}
                                     repos={repos}
                                     />
+                         
                          
                </div>
     

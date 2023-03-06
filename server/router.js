@@ -23,5 +23,17 @@ router.get("/test", async (req,res)=>{
     res.status(500).json(e)
     }
 })
+
+router.post('/test-delete', async(req, res)=>{
+
+       try{
+       const {id}=req.body
+       await Post.findByIdAndDelete(id)
+       res.status(200).json('success')
+       }catch(e){
+         res.status(500).json(e)
+       }
+
+})
     
 module.exports=router

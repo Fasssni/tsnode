@@ -4,17 +4,26 @@ import "../main.css"
 import { SetStateAction, useEffect, useState } from "react"
 
 
+interface GetType{
+    author?:string,
+    title:string, 
+    content:string, 
+    image?:string,
+    _id:string
+}
+
+
 interface PostType{
     author?:string,
     title:string, 
     content:string, 
     image?:string,
-    id?:string
+  
 }
 
 export const Posts=()=>{
 
-    const [posts, setPosts]=useState<PostType[]>()
+    const [posts, setPosts]=useState<GetType[]>()
     const [value, setValue]=useState<PostType>({ 
                                                     author:"",
                                                     title:"", 
@@ -41,21 +50,34 @@ export const Posts=()=>{
     }
     
     const postHandler=async ()=>{ 
-        
-        try{ 
-        localStorage.setItem("author", JSON.stringify(value.author))
-        await axios.post("http://localhost:3000/api/test",value)
-        await fetchPosts()
-
-        
-
-        
-        }catch(e){
-            setError(e)
-        }finally{
-            setValue(prevValue=>{return {...prevValue,title:"", content:""}})
+        if(!value.author||!value.title||!value.content ){
+            return alert("Заполни полностью")
         }
+        
+            else{  try{ 
+                    localStorage.setItem("author", JSON.stringify(value.author))
+                    await axios.post("http://localhost:3000/api/test",value)
+                    await fetchPosts()
 
+                    
+
+                    
+                    }catch(e){
+                        setError(e)
+                    }finally{
+                        setValue(prevValue=>{return {...prevValue,title:"", content:""}})
+                    }}
+
+    }
+
+    const deleteHandler=async(id:object)=>{
+        try{
+        await axios.post("http://localhost:3000/api/test-delete", id)
+        await fetchPosts()
+        console.log(id)
+        }catch(e){ 
+            console.log(e)
+        }
     }
 
     const getAuhtor=()=>{
@@ -85,10 +107,20 @@ export const Posts=()=>{
 
                  <div className="post_content">
                     {posts?.map((post)=>{
-                        return <div key={post.id} className="post_item">
+                        return <div key={post._id} className="post_item">
                                    <div className="post_item_top">
-                                        <h2 className="post_item_author">{post.author}-</h2>
-                                        <h3 className="post_item_title">{post.title}:</h3>
+                                         <div style={{display:"flex"}}>
+                                            <h2 className="post_item_author">{post.author}-</h2>
+                                            <h3 className="post_item_title">{post.title}:</h3>
+                                        </div>
+                                        <span style={{color:"red",
+                                                      cursor:"pointer", 
+                                                      fontWeight:"1000",
+                                                      width:"1rem",
+                                                      fontSize:"1rem"
+                                        }}
+                                              onClick={()=>deleteHandler({id:post._id})}>X</span>
+                                        
                                    </div>
                                    <div className="post_item_foot">
                                         <p className="post_item_content">
@@ -105,7 +137,7 @@ export const Posts=()=>{
                         <input className="post_input" 
                                placeholder="your name"
                                value={value.author}
-                               onChange={(e)=>!localStorage.getItem("author")&&setValue({...value,author:e.target.value})}
+                               onChange={(e)=>setValue({...value,author:e.target.value})}
                                />
                         <input className="post_input" 
                                placeholder="title"

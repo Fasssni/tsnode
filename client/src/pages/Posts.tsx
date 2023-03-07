@@ -2,7 +2,7 @@ import axios from "axios"
 import "../main.css"
 
 import { SetStateAction, useEffect, useState } from "react"
-import { useSearchPostMutation } from "../store/mongodb/mongodb.api"
+import { useDeletePostMutation, useLazyGetPostsQuery, useSendPostMutation } from "../store/mongodb/mongodb.api"
 
 
 export interface GetType{
@@ -24,7 +24,7 @@ export interface PostType{
 
 export const Posts=()=>{
 
-    const [posts, setPosts]=useState<GetType[]>()
+    
     const [value, setValue]=useState<PostType>({ 
                                                     author:"",
                                                     title:"", 
@@ -32,14 +32,20 @@ export const Posts=()=>{
                                                 })
     const [error, setError]=useState<unknown|any>()
 
+    const [sendPost, response]=useSendPostMutation()
+    const [getPosts,{isLoading,isError,data}]=useLazyGetPostsQuery()
+    const [deletePost]=useDeletePostMutation()
+
+    
+
     console.log("RENDERS")
 
     const fetchPosts=async ()=>{
         
        try{
-        const {data} = await axios.get('http://localhost:3000/api/test')
-        setPosts(data)
-        console.log("renders")
+        await getPosts(null)
+        
+        console.log("fetched")
        
        }catch(e){ 
            setError(e)
@@ -49,7 +55,7 @@ export const Posts=()=>{
         
        }
     }
-    const [searchPost, response]=useSearchPostMutation()
+   
     
     const postHandler=async ()=>{ 
         if(!value.author||!value.title||!value.content ){
@@ -58,7 +64,7 @@ export const Posts=()=>{
         
             else{  try{ 
                     localStorage.setItem("author", JSON.stringify(value.author))
-                    await searchPost(value)
+                    await sendPost(value)
                     await fetchPosts()
 
                     
@@ -74,7 +80,7 @@ export const Posts=()=>{
 
     const deleteHandler=async(id:object)=>{
         try{
-        await axios.post("http://localhost:3000/api/test-delete", id)
+        await deletePost(id)
         await fetchPosts()
         console.log(id)
         }catch(e){ 
@@ -82,10 +88,6 @@ export const Posts=()=>{
         }
     }
 
-    const getAuhtor=()=>{
-        
-
-    }
     useEffect(()=>{
         fetchPosts()
         const localAuthor=localStorage.getItem("author")
@@ -108,7 +110,7 @@ export const Posts=()=>{
                  <div className="post_form"> 
 
                  <div className="post_content">
-                    {posts?.map((post)=>{
+                    {data?.map((post)=>{
                         return <div key={post._id} className="post_item">
                                    <div className="post_item_top">
                                          <div style={{display:"flex"}}>

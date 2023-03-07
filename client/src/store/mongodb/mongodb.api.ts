@@ -9,24 +9,32 @@ export const mongoApi=createApi({
                         baseUrl:"http://localhost:3000/api"
                     }),
     endpoints:build=>({
-                      searchPost:build.mutation<any,PostType>({
+                      sendPost:build.mutation<any,PostType>({
                         query:(value:PostType)=>({ 
                             url:"/test",
                             method:"POST",
                             body:value,
-
                         }), 
                         transformErrorResponse:()=>console.log("wefwef")
                        
-                      }), 
+                      }),
+                      getPosts:build.query<GetType[],null>({
+                        query:()=>({
+                            url:"/test",
+                            method:"GET",
+                        }),
+                        transformResponse:(response:GetType[])=>response
+                    
+                      }),
+                      deletePost:build.mutation<any,object>({
+                        query:(id:object)=>({
+                            url:"/test-delete",
+                            method:"POST",
+                            body:id,
 
-                      searchRepos:build.query<IRepo[], string>({
-                         query:(username:string)=>({
-                           url:`users/${username}/repos`
-
-                         })
+                        })
                       })
                     })
 })
 
-export const {useSearchPostMutation}=mongoApi
+export const {useSendPostMutation,useLazyGetPostsQuery, useDeletePostMutation}=mongoApi

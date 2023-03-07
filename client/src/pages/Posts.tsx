@@ -2,9 +2,10 @@ import axios from "axios"
 import "../main.css"
 
 import { SetStateAction, useEffect, useState } from "react"
+import { useSearchPostMutation } from "../store/mongodb/mongodb.api"
 
 
-interface GetType{
+export interface GetType{
     author?:string,
     title:string, 
     content:string, 
@@ -13,7 +14,7 @@ interface GetType{
 }
 
 
-interface PostType{
+export interface PostType{
     author?:string,
     title:string, 
     content:string, 
@@ -48,6 +49,7 @@ export const Posts=()=>{
         
        }
     }
+    const [searchPost, response]=useSearchPostMutation()
     
     const postHandler=async ()=>{ 
         if(!value.author||!value.title||!value.content ){
@@ -56,7 +58,7 @@ export const Posts=()=>{
         
             else{  try{ 
                     localStorage.setItem("author", JSON.stringify(value.author))
-                    await axios.post("http://localhost:3000/api/test",value)
+                    await searchPost(value)
                     await fetchPosts()
 
                     
